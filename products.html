@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Desimithaas</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .products-page-header {
+            background: linear-gradient(135deg, #D4531F 0%, #E8704A 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .products-page-header h1 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .products-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .filters-sidebar {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-group {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+        }
+
+        .filter-group h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .filter-option input[type="checkbox"],
+        .filter-option input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .price-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .price-filter input {
+            width: 70px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .products-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .products-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sort-container select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .products-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .products-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                display: none;
+            }
+
+            .products-toolbar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">D</span>
+                <span class="logo-text">Desimithaas</span>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="products.html" class="nav-link active">Products</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-right">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for traditional sweets...">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="cart-icon">🛒</div>
+                <button class="login-btn">Login</button>
+            </div>
+
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <div class="products-page-header">
+        <h1>Our Products</h1>
+        <p>Explore our complete collection of authentic traditional sweets</p>
+    </div>
+
+    <!-- Products Section -->
+    <div class="products-container">
+        <!-- Filters Sidebar -->
+        <aside class="filters-sidebar">
+            <h3 style="margin-bottom: 20px;">Filters</h3>
+            
+            <div class="filter-group">
+                <h4>Price Range</h4>
+                <div class="price-filter">
+                    <input type="number" placeholder="Min" id="priceMin">
+                    <span>-</span>
+                    <input type="number" placeholder="Max" id="priceMax">
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4>Category</h4>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat1" value="traditional">
+                    <label for="cat1">Traditional Thekua</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat2" value="dryfruits">
+                    <label for="cat2">Dry Fruits Thekua</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="cat3" value="gift">
+                    <label for="cat3">Gift Boxes</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h4>Size</h4>
+                <div class="filter-option">
+                    <input type="checkbox" id="size1" value="500">
+                    <label for="size1">500 gm</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="size2" value="800">
+                    <label for="size2">800 gm</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="size3" value="1000">
+                    <label for="size3">1000 gm</label>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;">Apply Filters</button>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;">Clear All</button>
+        </aside>
+
+        <!-- Main Products Area -->
+        <div class="products-main">
+            <!-- Toolbar -->
+            <div class="products-toolbar">
+                <span class="products-count" id="productsCount">Showing 6 products</span>
+                <div class="sort-container">
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy">
+                        <option value="featured">Featured</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3 class="footer-title">T Desimithaas</h3>
+                <p class="footer-description">Authentic traditional sweets made with love and served fresh. Bringing you the taste of heritage with every bite.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon">f</a>
+                    <a href="#" class="social-icon">𝕏</a>
+                    <a href="#" class="social-icon">📷</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-section-title">Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-section-title">Customer Service</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Track Order</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Return Policy</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-section-title">Contact Info</h4>
+                <div class="contact-info">
+                    <p>📍 Ranchi, Jharkhand 834525</p>
+                    <p>📞 +91 8235530099</p>
+                    <p>📧 hello@thekua.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize products page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            
+            // Sort functionality
+            const sortSelect = document.getElementById('sortBy');
+            sortSelect.addEventListener('change', (e) => {
+                const sorted = sortProducts(e.target.value);
+                const productsGrid = document.getElementById('productsGrid');
+                productsGrid.innerHTML = sorted.map(product => `
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="${product.image}" alt="${product.name}">
+                        </div>
+                        <div class="product-info">
+                            <p class="product-name">${product.name}</p>
+                            <div class="product-rating">
+                                <span>⭐</span> ${product.rating} (${product.reviews})
+                            </div>
+                            <p class="product-price">₹${product.price}</p>
+                            <p class="product-weight">${product.weight}</p>
+                            <div class="product-actions">
+                                <button onclick="addToCart(${product.id})">Add to Cart</button>
+                                <button onclick="buyNow(${product.id})">Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        });
+    </script>
+</body>
+</html>
