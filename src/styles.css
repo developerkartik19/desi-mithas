@@ -1,10 +1,11 @@
 :root {
-  --primary-color: #D4531F;
-  --primary-dark: #B93D10;
-  --accent-color: #ff9f43;
-  --text-dark: #1a1a1a;
-  --text-soft: #6b4f3a;
-  --bg-light: #fff8f2;
+  --primary-color: #d94f27;
+  --primary-dark: #9e2f20;
+  --accent-color: #f6a43a;
+  --plum: #3d1f37;
+  --text-dark: #291b20;
+  --text-soft: #735b59;
+  --bg-light: #fff8ee;
   --bg-white: #ffffff;
   --border-color: #f0e0d6;
 }
@@ -13,10 +14,11 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: Georgia, 'Times New Roman', serif;
   background:
-    radial-gradient(circle at top left, rgba(212, 83, 31, 0.12), transparent 22%),
-    linear-gradient(135deg, #fffaf6 0%, var(--bg-light) 100%);
+    radial-gradient(circle at 10% 18%, rgba(246,164,58,0.2), transparent 20%),
+    radial-gradient(circle at 90% 88%, rgba(61,31,55,0.12), transparent 25%),
+    linear-gradient(135deg, #fffdf9 0%, var(--bg-light) 100%);
   color: var(--text-dark);
   min-height: 100vh;
 }
@@ -26,7 +28,7 @@ a { text-decoration: none; color: inherit; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
 .header {
-  background: rgba(255,255,255,0.82);
+  background: rgba(255,253,249,0.88);
   backdrop-filter: blur(14px);
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
   position: sticky;
@@ -43,7 +45,7 @@ a { text-decoration: none; color: inherit; }
 .logo:hover { transform: translateY(-2px); }
 .logo-icon {
   width: 42px; height: 42px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+  background: var(--plum);
   color: white; display: grid; place-items: center;
   box-shadow: 0 8px 20px rgba(212,83,31,0.25);
 }
@@ -64,17 +66,19 @@ a { text-decoration: none; color: inherit; }
 .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
 .nav-link.active { color: var(--primary-color); }
 
-.login-btn, .btn {
+.login-btn, .shop-btn, .btn {
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
   color: white; border: none; border-radius: 999px;
   padding: 10px 18px; cursor: pointer; font-weight: 600;
   box-shadow: 0 10px 20px rgba(212,83,31,0.2);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.login-btn:hover, .btn:hover {
+.login-btn:hover, .shop-btn:hover, .btn:hover {
   transform: translateY(-2px) scale(1.01);
   box-shadow: 0 14px 28px rgba(212,83,31,0.25);
 }
+
+.shop-btn { display: inline-block; font-family: inherit; font-size: 0.9rem; }
 
 .auth-section {
   min-height: 80vh; display: grid; place-items: center; padding: 30px 20px;
@@ -105,9 +109,10 @@ a { text-decoration: none; color: inherit; }
 .form-message { margin-top: 12px; color: var(--primary-dark); font-weight: 600; }
 
 .hero {
-  padding: 56px 20px 40px;
+  padding: 86px 20px 70px;
   position: relative; overflow: hidden;
 }
+.hero::marker { display: none; }
 .hero::before, .hero::after {
   content: '';
   position: absolute; border-radius: 50%; filter: blur(20px); opacity: 0.35; animation: drift 10s ease-in-out infinite alternate;
@@ -119,36 +124,44 @@ a { text-decoration: none; color: inherit; }
   width: 180px; height: 180px; background: rgba(255,159,67,0.2); bottom: 20px; left: -50px; animation-duration: 12s;
 }
 .hero-content {
-  display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: center; position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1.05fr 1fr; gap: 58px; align-items: center; position: relative; z-index: 1;
 }
 .hero-text {
-  animation: slideUp 0.7s ease both;
+  animation: slideUp 0.7s ease both; max-width: 620px;
 }
 .hero-title {
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2.8rem, 6vw, 5.3rem);
   margin-bottom: 12px;
-  line-height: 1.1;
-  background: linear-gradient(90deg, #2f1d14 0%, var(--primary-dark) 45%, var(--accent-color) 100%);
+  line-height: 0.98;
+  letter-spacing: -1px;
+  background: linear-gradient(120deg, var(--plum) 0%, var(--primary-dark) 58%, var(--primary-color) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: shimmer 4s linear infinite;
   background-size: 200% auto;
 }
-.hero-description { color: var(--text-soft); font-size: 1.05rem; line-height: 1.7; }
+.hero-description { color: var(--text-soft); font-size: 1.12rem; line-height: 1.75; max-width: 520px; }
 .hero-badge {
   display: inline-block; background: linear-gradient(135deg, #ffe3d4, #ffd8bd);
   color: var(--primary-color); padding: 8px 14px; border-radius: 999px; font-weight: 700; margin-bottom: 14px;
   animation: pulse 2.2s ease-in-out infinite;
 }
 .hero-buttons { margin-top: 18px; }
+.hero-note { color: var(--text-soft); font-size: 0.85rem; margin-top: 28px; letter-spacing: 0.4px; }
+.hero-note span { color: var(--accent-color); padding: 0 6px; }
 
 .products-grid {
-  display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr));
+  position: relative;
+}
+.products-grid::before {
+  content: 'THE MITHAI COUNTER'; position: absolute; top: -34px; right: 6px;
+  color: var(--primary-color); font-size: 0.72rem; letter-spacing: 2px; font-weight: 700;
 }
 .product-card {
-  background: rgba(255,255,255,0.9);
-  border-radius: 18px; padding: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.07);
-  border: 1px solid rgba(212,83,31,0.08);
+  background: rgba(255,255,255,0.78);
+  border-radius: 6px 24px 6px 24px; padding: 22px;
+  box-shadow: 0 14px 36px rgba(61,31,55,0.1);
+  border: 1px solid rgba(217,79,39,0.14);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   animation: riseIn 0.6s ease both;
 }
@@ -156,6 +169,8 @@ a { text-decoration: none; color: inherit; }
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 16px 36px rgba(0,0,0,0.12);
 }
+.product-card:nth-child(2n) { transform: translateY(28px); background: rgba(255,246,228,0.86); }
+.product-card:nth-child(2n):hover { transform: translateY(22px) scale(1.01); }
 .product-name { font-weight: 700; font-size: 1.05rem; }
 .product-price { color: var(--primary-color); font-weight: 700; }
 .product-description { color: var(--text-soft); line-height: 1.6; }
@@ -190,4 +205,7 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 860px) {
   .hero-content { grid-template-columns: 1fr; }
   .products-grid { grid-template-columns: 1fr; }
+  .product-card:nth-child(2n) { transform: none; }
+  .product-card:nth-child(2n):hover { transform: translateY(-6px) scale(1.01); }
+  .hero { padding-top: 54px; }
 }

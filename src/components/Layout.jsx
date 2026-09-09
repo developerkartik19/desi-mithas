@@ -13,7 +13,7 @@ const Layout = () => {
       // noop
     } finally {
       setUser(null);
-      navigate('/login');
+      navigate('/');
     }
   };
 
@@ -35,9 +35,9 @@ const Layout = () => {
           </nav>
           <div className="header-right">
             {user ? (
-              <button className="login-btn" onClick={handleLogout}>Logout</button>
+              <button className="shop-btn" onClick={handleLogout}>Sign out</button>
             ) : (
-              <Link className="login-btn" to="/login">Login</Link>
+              <a className="shop-btn" href="#products">Explore sweets</a>
             )}
           </div>
         </div>

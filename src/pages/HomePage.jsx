@@ -20,12 +20,13 @@ const HomePage = () => {
     <section className="hero">
       <div className="container hero-content">
         <div className="hero-text">
-          <span className="hero-badge">Premium Traditional Sweets</span>
-          <h1 className="hero-title">Authentic Taste, Modern Convenience</h1>
-          <p className="hero-description">Enjoy fresh thekua and heritage sweets delivered to your home.</p>
+          <span className="hero-badge">Small-batch mithai · Made with warmth</span>
+          <h1 className="hero-title">A little sweetness for every story.</h1>
+          <p className="hero-description">From family recipes to your front door, discover fresh thekua and heritage sweets made for sharing.</p>
           <div className="hero-buttons">
-            <a className="btn btn-primary" href="#products">Shop now</a>
+            <a className="btn btn-primary" href="#products">Browse the mithai counter <span aria-hidden="true">→</span></a>
           </div>
+          <div className="hero-note"><span>✦</span> Packed fresh every morning <span>✦</span> No fuss, just mithai</div>
         </div>
         <div id="products" className="products-grid">
           {products.map((product) => (
