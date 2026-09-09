@@ -1,4 +1,5 @@
 import axios from 'axios';
+import insforge from './insforge';
 
 const tokenStorageKey = 'insforge_access_token';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? '/api' : `${window.location.origin}/api`);
@@ -14,14 +15,6 @@ const setAuthToken = (token) => {
   } else {
     localStorage.removeItem(tokenStorageKey);
   }
-};
-
-const extractAuthData = (payload) => {
-  const direct = payload?.data || payload || {};
-  const nested = direct?.data || {};
-  const token = direct?.token || direct?.accessToken || nested?.token || nested?.accessToken || null;
-  const userPayload = direct?.user || nested?.user || direct || nested || {};
-  return { token, user: userPayload };
 };
 
 api.interceptors.request.use((config) => {
@@ -55,37 +48,60 @@ const toAppShape = (payload, key) => ({
 });
 
 export const registerUser = async (payload) => {
-  const response = await api.post('/auth/register', {
-    fullName: payload.fullName || payload.name,
+  const { data, error } = await insforge.auth.signUp({
     email: payload.email,
-    phone: payload.phone,
     password: payload.password,
-    confirmPassword: payload.confirmPassword || payload.password,
+    name: payload.fullName || payload.name,
+    redirectTo: `${globalThis.location?.origin || 'http://localhost:5173'}/login`,
   });
-  const { token, user } = extractAuthData(response?.data);
-  if (token) {
-    setAuthToken(token);
+  if (error) {
+    const authError = new Error(error.message || 'Registration failed');
+    authError.response = { data: { message: authError.message } };
+    throw authError;
   }
-  const normalizedUser = normalizeUser({ ...(response?.data || {}), user });
-  return { ...response, data: toAppShape(normalizedUser, 'user') };
+  const user = normalizeUser(data?.user || { email: payload.email, name: payload.fullName || payload.name });
+  return {
+    data: {
+      success: true,
+      message: data?.requireEmailVerification ? 'Please verify your email before signing in' : 'User registered successfully',
+      data: {
+        user,
+        accessToken: data?.accessToken,
+        requireEmailVerification: Boolean(data?.requireEmailVerification),
+      },
+    },
+  };
 };
 
 export const loginUser = async (payload) => {
-  const response = await api.post('/auth/login', {
+  const { data, error } = await insforge.auth.signInWithPassword({
     email: payload.email,
     password: payload.password,
   });
-  const { token, user } = extractAuthData(response?.data);
-  if (token) {
-    setAuthToken(token);
+  if (error) {
+    const authError = new Error(error.message || 'Login failed');
+    authError.response = { data: { message: authError.message } };
+    throw authError;
   }
-  const normalizedUser = normalizeUser({ ...(response?.data || {}), user });
-  return { ...response, data: toAppShape(normalizedUser, 'user') };
+  const user = normalizeUser(data?.user || { email: payload.email });
+  return {
+    data: {
+      success: true,
+      message: 'Login successful',
+      data: { user, accessToken: data?.accessToken },
+    },
+  };
+};
+
+export const getCurrentUser = async () => {
+  const { data, error } = await insforge.auth.getCurrentUser();
+  if (error) throw error;
+  return data?.user ? normalizeUser(data.user) : null;
 };
 
 export const logoutUser = async () => {
   try {
-    await api.post('/auth/logout');
+    await insforge.auth.signOut();
   } finally {
     setAuthToken(null);
   }

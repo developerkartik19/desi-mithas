@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { fetchMe } from '../api';
+import { getCurrentUser } from '../api';
 
 const AuthContext = createContext(null);
 const tokenStorageKey = 'insforge_access_token';
@@ -10,16 +10,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
-      const savedToken = localStorage.getItem(tokenStorageKey);
-      if (!savedToken) {
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await fetchMe();
-        setUser(response?.data?.data?.user || null);
+        setUser(await getCurrentUser());
       } catch {
         setUser(null);
       } finally {
