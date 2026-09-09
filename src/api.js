@@ -52,7 +52,7 @@ export const registerUser = async (payload) => {
     email: payload.email,
     password: payload.password,
     name: payload.fullName || payload.name,
-    redirectTo: `${globalThis.location?.origin || 'http://localhost:5173'}/login`,
+    redirectTo: `${globalThis.location?.origin || 'http://localhost:5173'}/#/login`,
   });
   if (error) {
     const authError = new Error(error.message || 'Registration failed');
