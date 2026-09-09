@@ -2,10 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { createAdminClient } from '@insforge/sdk';
 
 dotenv.config();
 
 let clientInstance = null;
+let authClientInstance = null;
 
 const getProjectConfig = () => {
   const projectJsonPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.insforge', 'project.json');
@@ -31,3 +33,19 @@ export const createInsforgeClient = async () => {
 };
 
 export const getInsforgeClient = () => clientInstance;
+
+export const createInsforgeAuthClient = async () => {
+  if (authClientInstance) return authClientInstance;
+
+  const config = await createInsforgeClient();
+  if (!config.apiKey) {
+    throw new Error('InsForge API key is not configured');
+  }
+
+  authClientInstance = createAdminClient({
+    baseUrl: config.baseURL,
+    apiKey: config.apiKey,
+  });
+
+  return authClientInstance;
+};

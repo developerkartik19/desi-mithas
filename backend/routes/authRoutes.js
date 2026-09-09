@@ -2,10 +2,8 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import dotenv from 'dotenv';
-import { createInsforgeClient } from '../services/insforgeClient.js';
+import { createInsforgeAuthClient } from '../services/insforgeClient.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
-
-const fetch = globalThis.fetch;
 
 dotenv.config();
 const router = express.Router();
@@ -33,37 +31,34 @@ router.post('/register', async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Passwords do not match', data: {} });
     }
 
-    const client = await createInsforgeClient();
-    const response = await fetch(`${client.baseURL}/api/auth/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(client.apiKey ? { Authorization: `Bearer ${client.apiKey}` } : {}),
-      },
-      body: JSON.stringify({
+    const client = await createInsforgeAuthClient();
+    const { data, error } = await client.auth.signUp({
         email,
         password,
         name: fullName,
         redirectTo: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login`,
-      }),
     });
 
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      const status = payload?.statusCode === 409 ? 409 : 400;
-      return res.status(status).json({ success: false, message: payload?.message || 'Registration failed', data: {} });
+    if (error) {
+      const status = error.statusCode === 409 ? 409 : 400;
+      return res.status(status).json({ success: false, message: error.message || 'Registration failed', data: {} });
     }
 
-    const signedInUser = payload?.user || { id: payload?.id, email, name: fullName, role: 'user' };
-    const token = createToken({ id: signedInUser.id || `${Date.now()}`, email: signedInUser.email || email, role: signedInUser.role || 'user' });
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+    const signedInUser = data?.user || { id: undefined, email, name: fullName, role: 'user' };
+    const token = data?.accessToken
+      ? createToken({ id: signedInUser.id || `${Date.now()}`, email: signedInUser.email || email, role: signedInUser.role || 'user' })
+      : null;
+    if (token) {
+      res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
+    }
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: data?.requireEmailVerification ? 'Please verify your email before signing in' : 'User registered successfully',
       data: {
         user: { id: signedInUser.id, fullName: signedInUser.name || fullName, email: signedInUser.email || email, phone, role: signedInUser.role || 'user' },
         token,
-        accessToken: payload?.accessToken,
+        accessToken: data?.accessToken,
+        requireEmailVerification: Boolean(data?.requireEmailVerification),
       },
     });
   } catch (error) {
@@ -79,22 +74,14 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Email and password are required', data: {} });
     }
 
-    const client = await createInsforgeClient();
-    const response = await fetch(`${client.baseURL}/api/auth/sessions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(client.apiKey ? { Authorization: `Bearer ${client.apiKey}` } : {}),
-      },
-      body: JSON.stringify({ email, password, method: 'password' }),
-    });
+    const client = await createInsforgeAuthClient();
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
 
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      return res.status(401).json({ success: false, message: payload?.message || 'Invalid credentials', data: {} });
+    if (error) {
+      return res.status(error.statusCode === 403 ? 403 : 401).json({ success: false, message: error.message || 'Invalid credentials', data: {} });
     }
 
-    const signedInUser = payload?.user || { id: payload?.id, email, role: 'user' };
+    const signedInUser = data?.user || { id: undefined, email, role: 'user' };
     const token = createToken({ id: signedInUser.id || `${Date.now()}`, email: signedInUser.email || email, role: signedInUser.role || 'user' });
     res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
     res.json({
@@ -103,7 +90,7 @@ router.post('/login', async (req, res, next) => {
       data: {
         user: { id: signedInUser.id, fullName: signedInUser.name || signedInUser.fullName || '', email: signedInUser.email || email, phone: signedInUser.phone || '', role: signedInUser.role || 'user' },
         token,
-        accessToken: payload?.accessToken,
+        accessToken: data?.accessToken,
       },
     });
   } catch (error) {

@@ -19,8 +19,12 @@ const RegisterPage = () => {
     try {
       const response = await registerUser(form);
       const user = response?.data?.data?.user ?? response?.data?.user ?? null;
-      setUser(user);
-      if (user) {
+      const requiresVerification = response?.data?.data?.requireEmailVerification;
+      setUser(requiresVerification ? null : user);
+      if (requiresVerification) {
+        setMessage('Account created. Check your email to verify your account, then sign in.');
+        navigate('/verify-email');
+      } else if (user) {
         setMessage('Registration successful');
         navigate('/');
       } else {
